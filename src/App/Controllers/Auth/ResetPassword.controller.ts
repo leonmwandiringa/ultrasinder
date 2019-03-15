@@ -13,7 +13,7 @@ class ResetPasswordController{
    public static SvResponse: ResponseInterface;
 
     //reset PasswordMethod
-    public async ResetPassword(req: Request, res: Response){
+    public async Init(req: Request, res: Response){
 
         let ResetReset = await AuthService.Init("applyreset", req.body);
 

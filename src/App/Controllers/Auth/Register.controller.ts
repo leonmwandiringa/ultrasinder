@@ -14,7 +14,7 @@ class RegisterController{
    public static SvResponse: ResponseInterface;
 
     //register user
-   public async Register(req: Request, res: Response){
+   public async Init(req: Request, res: Response){
 
         let ServiceResponse = await AuthService.Init("register", req.body);
 

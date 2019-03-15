@@ -28,7 +28,7 @@ const tsProject = typescript.createProject(JSON_FILES[0]);
 /**
  * @uses creating starter folders and files
  * @return void exec
- * @params Starterolders array(object)
+ * @params Startefolders array(object)
  */
 (()=>{
     StarterFolders.forEach((folder)=>{

@@ -17,23 +17,26 @@ class AuthRoutesValidation{
 
         switch(req.url){
 
-            case "/auth/register":
+            case "v1/auth/register":
                 req.checkBody("name", "Name is required").notEmpty();
                 req.checkBody("email", "email is required").notEmpty();
                 req.checkBody("password", "password is required").notEmpty();
-                req.checkBody("type", "Account Type is required").notEmpty();
             break;
 
-            case "/auth/login":
+            case "v1/auth/login":
                 req.checkBody("email", "email is required").notEmpty();
+                req.checkBody("email", "email is invalid").isEmail();
                 req.checkBody("password", "password is required").notEmpty();
             break;
 
-            case "/awardsubmission/create":
-                req.checkBody("title", "title is required").notEmpty();
-                req.checkBody("category", "category is required").notEmpty();
-                req.checkBody("award", "award is required").notEmpty();
-                //req.checkBody("attachments", "attachments is required").notEmpty();
+            case "v1/auth/forgot-password":
+                req.checkBody("email", "email is required").notEmpty();
+                req.checkBody("email", "email is invalid").isEmail();
+            break;
+
+            case "v1/auth/reset-password":
+                req.checkBody("email", "email is required").notEmpty();
+                req.checkBody("email", "email is invalid").isEmail();
             break;
 
         }

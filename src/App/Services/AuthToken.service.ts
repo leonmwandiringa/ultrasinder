@@ -6,7 +6,7 @@
 
 
 let jwt = require("jsonwebtoken");
-import Config from "../../../Bootstrap/Config";
+import Config from "../..//Config";
 
 class AuthTokenService{
 

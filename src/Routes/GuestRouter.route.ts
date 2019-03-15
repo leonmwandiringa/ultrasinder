@@ -6,7 +6,7 @@
 
 import { Router } from "express";
 import { RoutesValidation, CSRF } from "../App/Middlewares";
-import MainController from "../App/Controllers/Main.controller";
+import { TokenController, RegisterController, ResetPasswordController, ForgotPasswordController, LoginController } from "../App/Controllers";
 
 
 class GuestRoutes{
@@ -19,21 +19,27 @@ class GuestRoutes{
         this.initiateRoutes();
     }
 
-    //bundle routes
+    /**
+     * @uses Bundle all guest Routes
+     */
     private initiateRoutes(): void{
 
-        this.router.get("/token", MainController.SingleGet("token"));
+        this.router.get("v1/token", TokenController.Init);
+        this.AuthRoutes();
+    }
 
-        this.router.post("/auth/register", CSRF.initSecurity, MainController.SingleAuth("register"));
+    /**
+     * @uses Authentication routes
+     * @returns void
+     */
+    private AuthRoutes(): void{
+        this.router.post("v1/auth/register", CSRF.initSecurity, RegisterController.Init);
 
-        this.router.post("/auth/login", CSRF.initSecurity, MainController.SingleAuth("login"));
+        this.router.post("v1/auth/login", CSRF.initSecurity, LoginController.Init);
 
-        this.router.post("/auth/forgot-password", CSRF.initSecurity, MainController.SingleAuth("reset"));
+        this.router.post("v1/auth/forgot-password", CSRF.initSecurity, ForgotPasswordController.Init);
 
-        this.router.post("/auth/reset-password", CSRF.initSecurity, MainController.SingleAuth("applyreset"));
-
-        this.router.get("/rawfile/:url", MainController.SingleGet("rawfile"));
-
+        this.router.post("v1/auth/reset-password", CSRF.initSecurity, ResetPasswordController.Init);
     }
 
 }

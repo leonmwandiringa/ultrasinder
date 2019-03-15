@@ -4,7 +4,8 @@
   "description": "write code smarter",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon dist/Server.js",
+    "start": "pm2 start dist/Server.js -i 0",
+    "dev": "nodemon dist/Server.js",
     "startcluster": "node dist/Cluster.js",
     "test": "mocha --reporter spec --compilers ts:ts-node/register 'Tests/**/*.test.ts'",
     "compile": "gulp compile"

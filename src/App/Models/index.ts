@@ -4,4 +4,4 @@
  * @return Schemas objects
  */
 
-export { default as User } from "./User.schema";
+export { default as User } from "./Schema/User.schema";

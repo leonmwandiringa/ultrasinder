@@ -6,47 +6,12 @@
 
 
 let jwt = require("jsonwebtoken");
-import Config from "../../../Bootstrap/Config";
-import { User } from "../../Models";
+import Config from "../../Config";
+import { User } from "../Models";
 import { AuthToken, EmailService, CryptoService } from "./index";
 let bcrypt = require("bcryptjs");
 
 class AuthService{
-
-    //init file upload
-   public Init(exec: any, params: any = null): any{
-
-        switch(exec){
-            case "register":
-                return AuthService.InsertUser(params);
-            break;
-            case "login":
-                return AuthService.LoginUser(params);
-            break;
-            case "user":
-                return AuthService.getUser(params);
-            break;
-            case "users":
-                return AuthService.getAllUsers();
-            break;
-            case "delete":
-                return AuthService.DeleteUser(params);
-            break;
-            case "reset":
-                return AuthService.resetUserPass(params);
-            break;
-            case "updateuser":
-                return AuthService.UpdateUser(params);
-            break;
-            case "updateuserbyadmin":
-                return AuthService.UpdateUserByAdmin(params);
-            break;
-            case "applyreset":
-                return AuthService.ApplyPasswordReset(params);
-            break;
-        }
-
-   }
 
    //inserting user details for registerring user
    public static async InsertUser({name, email, password, type}: any){
@@ -158,7 +123,7 @@ ${Config.CLIENT.url}/reset-password.html?token=${securityToken}
     }
 
     //validate and password reset
-   public static async ApplyPasswordReset(params: any){
+    public static async ApplyPasswordReset(params: any){
 
         let securityToken;
         securityToken = await CryptoService.decrypt(params.token);
@@ -198,10 +163,10 @@ ${Config.CLIENT.url}/reset-password.html?token=${securityToken}
 
         }
  
-   }
+    }
 
     //inserting user details for registerring user
-   public static async getUser(user: any){
+    public static async getUser(user: any){
     
         let returnUser = await User.findOne({_id: user});
 
@@ -213,10 +178,10 @@ ${Config.CLIENT.url}/reset-password.html?token=${securityToken}
             }
 
 
-   }
+    }
 
           //inserting user details for registerring user
-   public static async getAllUsers(){
+    public static async getAllUsers(){
     
         let returnUsers = await User.find({});
 
@@ -228,10 +193,10 @@ ${Config.CLIENT.url}/reset-password.html?token=${securityToken}
             }
 
 
-   }
+    }
 
     //deleting user
-   public static async DeleteUser(user: any){
+    public static async DeleteUser(user: any){
     
         let returnUsers = await User.findOneAndDelete({_id: user});
 
@@ -243,10 +208,10 @@ ${Config.CLIENT.url}/reset-password.html?token=${securityToken}
                 result: returnUsers
             }
 
-   }
+    }
 
-   //update current user
-   public static async UpdateUser(params: any){
+    //update current user
+    public static async UpdateUser(params: any){
     
         try{
             let user = await User.findOneAndUpdate({_id: params.id}, {name: params.name, number: params.number, address: params.address});

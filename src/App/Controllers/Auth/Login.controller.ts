@@ -13,7 +13,7 @@ class LoginController{
    public static SvResponse: ResponseInterface;
 
     //new project creation
-    public async Login(req: Request, res: Response){
+    public async Init(req: Request, res: Response){
 
         let ServiceResponse = await AuthService.Init("login", req.body);
 

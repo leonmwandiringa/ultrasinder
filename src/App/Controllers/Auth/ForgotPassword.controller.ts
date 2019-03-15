@@ -13,7 +13,7 @@ class ForgotPasswordController{
    public static SvResponse: ResponseInterface;
 
     //new project creation
-    public async ForgotPassword(req: Request, res: Response){
+    public async Init(req: Request, res: Response){
 
         let ServiceResponse = await AuthService.Init("reset", req.body);
 

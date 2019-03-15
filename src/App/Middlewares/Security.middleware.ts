@@ -15,6 +15,7 @@ import { Request, Response, NextFunction } from "express";
         Security.CORS(res);
         Security.XSS(res);
         Security.CSP(res);
+        Security.CrossDomainPolicy(res);
         next();
 
     }
@@ -49,6 +50,13 @@ import { Request, Response, NextFunction } from "express";
     public static CSP(res: Response){
 
         res.header("Content-Security-Policy", "default src");
+
+    }
+
+    //permitted cross dmain policy(flash and acrobat instruction)
+    public static CrossDomainPolicy(res: Response){
+
+        res.header("X-Permitted-Cross-Domain-Policies", "none");
 
     }
 
