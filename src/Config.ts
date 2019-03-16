@@ -6,9 +6,6 @@
 
 const Config = {
 
-    MONGO_URL_TEST: "mongodb://prism:Superprism101@ds257564.mlab.com:57564/prism",
-    MONGO_URL_PROD: `mongodb://prism:Password221$@ds153732.mlab.com:53732/prism`,
-
     PORT: 3000,
 
     CSRF_TOKENS: ['MIICXAIBAAKBgQCIhvMmFBwSwKgPzhZAMRfUH0pVTZNwWaORqA780uGJvoo5rMNB',
@@ -77,27 +74,39 @@ const Config = {
     
     STORAGE:{
         cloudinary:{
-            name: 'clockworkmediaassets',
-            key: '526193613256944',
-            secret: 'V_g2eCwWiYV6hfKnlZ2jcWLnKAw'
+            name: '',
+            key: '',
+            secret: ''
         }
     },
+
+    DATABASE:{
+        nosql:{
+            mongodb:{
+                production: "",
+                test: ""
+            }
+        },
+        sql:{
+
+        }
+    },
+
     SMTP_RELAY:{
         mailjet:{
-            username: '060dc2cacdd45b0e681da7010b811635',
-            password: '01b44f00338b1677c5bfd15bf44f6d56',
+            username: '',
+            password: '',
             port: 587,
             secure: false,
-            from: 'submissionsportal@prism-awards.co.za'
+            from: ''
         }
     },
     CRYPTO:{
-        encryption_key: '84mbNGmgqE7lFVbgc5DwjurpSfdNhTVf',
+        encryption_key: '',
         encryption_size: 32
     },
     CLIENT:{
-        url: "http://www.prism-awards.co.za/app",
-        //url: "https://prism-client.herokuapp.com"
+        url: ""
     }
 
 

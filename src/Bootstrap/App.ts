@@ -10,7 +10,7 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
 import * as gzip from "compression";
-import { Security, GlobalValidation, ContentLength } from "../App/Middlewares";
+import { Security, GlobalValidation, ContentLength, HppSecurity } from "../App/Middlewares";
 //import GlobalValidation from "../App/Middlewares/BaseValidations.middleware";
 import GuestRoutes from "../Routes/GuestRouter.route";
 import AuthRoutes from "../Routes/AuthRouter.route";
@@ -36,10 +36,11 @@ class App{
     /* define db connection */
     private dbConfig(){
         let mongo: any = mongoose;
-        let url: string = Config.MONGO_URL_PROD;
+
+        let url: string = Config.DATABASE.nosql.mongodb.test;
         mongo.Promise = global.Promise;
+
         mongo.connect(url, { useNewUrlParser: true });
-        //let db = mongoose.connect(url, { useNewUrlParser: true });
         return mongo;
 
     }
@@ -48,8 +49,8 @@ class App{
     private moduleMiddlewares(): void{
 
         this.express.use(gzip());
-        this.express.use(bodyParser.json({limit: '500000mb'}));
-        this.express.use(bodyParser.urlencoded({extended: true, limit: '500000mb'}));
+        this.express.use(bodyParser.json({limit: '50mb'}));
+        this.express.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 
     }
 
@@ -60,6 +61,8 @@ class App{
         this.express.use(superdooper('Logs/logs.log'));
         //security middlewares
         this.express.use(Security.Init);
+        //hpp security middleware
+        this.express.use(HppSecurity.Init());
         //global validations
         this.express.use(GlobalValidation.Validation());
         //content length security
