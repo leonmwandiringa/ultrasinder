@@ -7,6 +7,9 @@
 import Config from "../../Config"; 
 import { promises } from "fs";
 let cloudinary = require("cloudinary").v2;
+import ServiceResponse from "../Interfaces/ServiceResponse.interface";
+
+//defining cloud service client
 cloudinary.config({ 
     cloud_name: Config.STORAGE.cloudinary.name, 
     api_key: Config.STORAGE.cloudinary.key, 
@@ -26,10 +29,18 @@ class CloudUploadService{
             cloudinary.uploader.upload(payload, {timeout:60000, resource_type: "auto"}, (error: any, result: any)=>{
 
                 if(error){
-                    return reject(error);
+                    return reject(<ServiceResponse>{
+                        error: error,
+                        notice: "an error occured creating file",
+                        result: null
+                    });
                 }
 
-                return resolve(result);
+                return resolve(<ServiceResponse>{
+                    error: null,
+                    notice: "File was succesfully created",
+                    result: result
+                });
 
             });
 
