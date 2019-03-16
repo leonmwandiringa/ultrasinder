@@ -8,7 +8,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import Config from "../../Config";
 import MessageResponse from "../Interfaces/Response.interface";
 let jwt = require("jsonwebtoken");
-import User from "../Models/User.schema";
+import User from "../Models/Schema/User.schema";
 
 class JWTAuthMiddleware{
 

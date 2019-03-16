@@ -10,12 +10,11 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
 import * as gzip from "compression";
-import { Security, GlobalValidation } from "../App/Middlewares";
+import { Security, GlobalValidation, ContentLength } from "../App/Middlewares";
 //import GlobalValidation from "../App/Middlewares/BaseValidations.middleware";
 import GuestRoutes from "../Routes/GuestRouter.route";
 import AuthRoutes from "../Routes/AuthRouter.route";
 import Config from "../Config";
-import EventsDispatcher from "../App/Controllers/EventsDispatcher.events";
 
 //import RealtimeMiddleware from "../App/Middlewares/RealtimeLogger";
 
@@ -31,14 +30,6 @@ class App{
         this.dbConfig();
         this.routes();
         //this.RunEventsDispatcher();
-
-    }
-
-    //events dicpatcher runtime listener
-    private RunEventsDispatcher(){
-
-        let Events: EventsDispatcher = new EventsDispatcher();
-        return Events;
 
     }
 
@@ -67,10 +58,12 @@ class App{
 
         //logger to file middlewares
         this.express.use(superdooper('Logs/logs.log'));
-
         //security middlewares
         this.express.use(Security.Init);
+        //global validations
         this.express.use(GlobalValidation.Validation());
+        //content length security
+        this.express.use(ContentLength.Init());
 
     }
 
