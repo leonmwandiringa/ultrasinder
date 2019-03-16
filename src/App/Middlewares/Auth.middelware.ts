@@ -4,11 +4,11 @@
  * @return a Jwt auth security middleware
  */
 
-import { Router, Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import Config from "../../Config";
-import MessageResponse from "../Interfaces/Response.interface";
+import MessageResponse from "../Interfaces/HttpResponse.interface";
 let jwt = require("jsonwebtoken");
-import User from "../Models/Schema/User.schema";
+import { User } from "../Models";
 
 class JWTAuthMiddleware{
 
@@ -27,26 +27,24 @@ class JWTAuthMiddleware{
 
             //handle invalid posted values
             if(validationError){
-                
-                message =  {
+
+                return res.status(403).json(<MessageResponse>{
                     status: false,
                     validationMessage: validationError,
                     response: null,
                     responseMessage: `There was a problem validating your authenticity token`
-                }
-
-                return res.status(403).json(message);
+                });
 
             }else{
                 
                 //check validty of jwt token
-                jwt.verify(JWTToken, Config.JWT_SECRET, (err: any, decoded: any)=>{
+                jwt.verify(JWTToken, Config.JWT_SECRET, async (err: any, decoded: any)=>{
 
                     if(err){
 
-                        return res.status(403).json({
+                        return res.status(403).json(<MessageResponse>{
                             status: false,
-                            validationMessage: validationError,
+                            validationMessage: err,
                             response: null,
                             responseMessage: `There was a problem validating your authenticity token`
                         });
@@ -55,37 +53,26 @@ class JWTAuthMiddleware{
                     
                     let decodedToken = decoded.data;
 
-                    User.findOne({email: decodedToken.email}, (err: any, user: any)=>{
+                    try{
 
-                        if(err){
+                        let FoundUser = await User.findOne({email: decodedToken.email});
+                        return FoundUser ? next() : res.status(403).json(<MessageResponse>{
+                            status: false,
+                            validationMessage: "error",
+                            response: null,
+                            responseMessage: `There was a problem validating your token`
+                        });
 
-                            return res.status(500).json({
-                                status: false,
-                                validationMessage: "error",
-                                response: null,
-                                responseMessage: `There was a problem looking for this user`
-                            });
-                            
-                        }
+                    }catch(err){
 
-                        if(user == null){
+                        return res.status(403).json(<MessageResponse>{
+                            status: false,
+                            validationMessage: "error",
+                            response: null,
+                            responseMessage: `There was a problem validating your token`
+                        });
 
-                            return res.status(403).json({
-                                status: false,
-                                validationMessage: "error",
-                                response: null,
-                                responseMessage: `There was a problem validating your token`
-                            });
-
-                        }else{
-                            //pass user data to the next route controller
-                            //didnt wanna go through adding extra interface props with strict types
-                            next();
-
-                        }
-
-
-                    });
+                    }
                     
 
                 });

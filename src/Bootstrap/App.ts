@@ -63,7 +63,7 @@ class App{
         //global validations
         this.express.use(GlobalValidation.Validation());
         //content length security
-        this.express.use(ContentLength.Init());
+        this.express.use(ContentLength.Init({}));
 
     }
 

@@ -1,29 +1,31 @@
 /**
  * @author Leon Mwandiringa
- * @uses define file uploads service
- * @return file url or returned error
+ * @uses define Auth services functionalities
+ * @return object, token, error accordingly
  */
 
-
-let jwt = require("jsonwebtoken");
 import Config from "../../Config";
 import { User } from "../Models";
 import { AuthToken, EmailService, CryptoService } from "./index";
+import ServiceResponse from "../Interfaces/ServiceResponse.interface";
 let bcrypt = require("bcryptjs");
 
 class AuthService{
 
-   //inserting user details for registerring user
-   public static async InsertUser({name, email, password, type}: any){
+   /**
+    * @uses creating and validating user
+    * @return [success] user details and token [error] error object
+    * @params body params
+    */
+   public static async CreateUser({name, email, password, type}: any){
 
         let userRegistered = await User.findOne({email: email});
 
         if(userRegistered){
-            return {
-                exists: true,
-                created: false,
+            return <ServiceResponse>{
+                notice: "an error occured finding the user",
                 error: null,
-                user: null
+                result: null
             }
         }
 
@@ -36,72 +38,80 @@ class AuthService{
 
             let sendMessage = `Account for user ${name} was successfully created. you can now use the portal.`;
             //send email
-            (new EmailService({email: email, subject: "Prism Awards account created", message: sendMessage})).send();
+            (new EmailService({email, subject: "Prism Awards account created", message: sendMessage})).send();
 
             let token: any = await AuthToken.Init(newUser);
-            return {
-                exists: false,
-                created: true,
+
+            newUser.password = null;
+            return <ServiceResponse>{
+                notice: "User was successfully created",
                 error: null,
-                user: newUser,
-                logintoken: token
+                result: {user: newUser, token: token},
             }
+
         }catch(err){
-            console.log(err);
-            return {
-                exists: false,
-                created: false,
+
+            return <ServiceResponse>{
+                notice: "An error occured Creating user",
                 error: err,
-                user: null
+                result: null
             }
 
         }
 
    }
 
-   //inserting user details for registerring user
-   public static async LoginUser({name, email, password}: any){
+   /**
+    * @uses Logging and validating user
+    * @return [success] user details and token [error] error object
+    * @params body params
+    */
+   public static async LoginUser({email, password}: any){
 
         let userFound = await User.findOne({email: email});
 
         if(!userFound){
-            return {
-                exists: false,
+            return <ServiceResponse>{
+                notice: "no such user was found or password is incorect",
                 error: "no such user was found or password is incorect",
-                user: null
+                result: null
             }
         }
 
         if(!bcrypt.compareSync(password.trim(), userFound.password)){
-            return {
-                exists: true,
+            return <ServiceResponse>{
+                notice: "no such user was found or password is incorect",
                 error: "no such user was found or password is incorect",
-                user: null
+                result: null
             }
         }
 
         let token: any = await AuthToken.Init(userFound);
 
-        return {
-            exists: true,
-            error: "user successfully logged in",
-            user: {name: userFound.name, _id: userFound._id, email: userFound.email, token}
+        userFound.password = null;
+        return <ServiceResponse>{
+            notice: "User was succefully logged in",
+            error: null,
+            result: {user: userFound, token}
         }
 
     }
 
 
-
-       //inserting ureset user password
-   public static async resetUserPass({email}: any){
+    /**
+    * @uses reseting and validating user password
+    * @return [success] user details and token [error] error object
+    * @params body params
+    */
+   public static async ForgotUserPassword({email}: any){
 
         let userFound = await User.findOne({email: email});
 
         if(!userFound){
-            return {
-                exists: false,
+            return <ServiceResponse>{
+                notice: "no such user was found",
                 error: "no such user was found",
-                user: null
+                result: null
             }
         }
 
@@ -111,31 +121,29 @@ class AuthService{
         
 ${Config.CLIENT.url}/reset-password.html?token=${securityToken}
         `;
-            //send email
+        //send email
         (new EmailService({email: email, subject: "Prism Awards account reset", message: sendMessage})).send();
         
-        return {
-            exists: true,
-            error: "reset sent, please check your email and finish reset password within 24hrs",
-            user: {}
+        return <ServiceResponse>{
+            notice: "reset sent, please check your email and finish reset password within 24hrs",
+            error: null,
+            result: {}
         }
 
     }
 
-    //validate and password reset
-    public static async ApplyPasswordReset(params: any){
+    /**
+    * @uses applying reseting and validating user
+    * @return [success] user details and token [error] error object
+    * @params body params
+    */
+    public static async ResetUserPassword(params: any){
 
-        let securityToken;
-        securityToken = await CryptoService.decrypt(params.token);
+        let securityToken = await CryptoService.decrypt(params.token);
         let timeTaken = (((new Date()).getTime() - (new Date(securityToken.time)).getTime())/1000)/(60*60);
 
-        console.log(securityToken);
-        console.log(timeTaken);
-
         if(timeTaken > 24){
-            return {
-                exists: true,
-                validated: false,
+            return <ServiceResponse>{
                 error: null,
                 notice: "Please rerequest for another token, token has expired",
                 result: null
@@ -146,86 +154,125 @@ ${Config.CLIENT.url}/reset-password.html?token=${securityToken}
         let passChanged = await User.findOneAndUpdate({_id: securityToken._id}, {password: encryptedPass});
 
         if(passChanged){
-            return {
-                exists: true,
+
+            return <ServiceResponse>{
                 error: null,
                 result: true,
                 notice: "Password was successfully reset You can now login"
             }
+
         }else{
 
-            return {
-                exists: true,
-                error: true,
-                result: false,
-                notice: "and error happened updating your password"
+            return <ServiceResponse>{
+                error: "an error happened updating your password",
+                result: null,
+                notice: "an error happened updating your password"
             }
 
         }
  
     }
 
-    //inserting user details for registerring user
+    /**
+    * @uses get and validating user
+    * @return [success] user details and token [error] error object
+    * @params body params
+    */
     public static async getUser(user: any){
     
-        let returnUser = await User.findOne({_id: user});
-
-            return {
-                exists: true,
-                found: returnUser ? true : false,
+        try{
+            let returnUser = await User.findOne({_id: user});
+            return <ServiceResponse>{
+                notice: "User was found",
                 error: null,
                 result: returnUser
             }
-
+        }catch(err){
+            return <ServiceResponse>{
+                notice: "User was not found",
+                error: err,
+                result: null
+            }
+        }
 
     }
 
-          //inserting user details for registerring user
+    /**
+    * @uses get All USERS
+    * @return [success] user details and token [error] error object
+    * @params body params
+    */
     public static async getAllUsers(){
     
-        let returnUsers = await User.find({});
+        try{
 
-            return {
-                exists: true,
-                found: returnUsers ? true : false,
+            let returnUsers = await User.find({});
+            return <ServiceResponse>{
                 error: null,
+                notice: "Users were succefully found",
                 result: returnUsers
             }
 
+        }catch(err){
+
+            return <ServiceResponse>{
+                error: err,
+                notice: "Users were succefully found",
+                result: null
+            }
+
+        }
 
     }
 
-    //deleting user
+    /**
+    * @uses delete single user
+    * @return [success] user details  [error] error object
+    * @params request params user id
+    */
     public static async DeleteUser(user: any){
     
-        let returnUsers = await User.findOneAndDelete({_id: user});
+        try{
 
-            return {
-                exists: true,
-                found: true,
+            let returnUsers = await User.findOneAndDelete({_id: user});
+
+            return <ServiceResponse>{
                 error: null,
                 notice: "User was succesfully delete",
                 result: returnUsers
             }
 
+        }catch(err){
+
+            return <ServiceResponse>{
+                error: err,
+                notice: "User was succesfully delete",
+                result: null
+            }
+
+        }
+
     }
 
-    //update current user
+    /**
+    * @uses delete single user
+    * @return [success] user details  [error] error object
+    * @params request body params
+    */
     public static async UpdateUser(params: any){
     
         try{
+
             let user = await User.findOneAndUpdate({_id: params.id}, {name: params.name, number: params.number, address: params.address});
-            return {
-                exists: false,
+            return <ServiceResponse>{
                 error: null,
                 notice: 'User profile was successfully updated',
                 result: user
             }
 
         }catch(error){
-            console.log(error);
-            return {
-                exists: false,
+
+            return <ServiceResponse>{
                 error: error,
                 notice: 'an error occured updating',
                 result: null
@@ -235,33 +282,6 @@ ${Config.CLIENT.url}/reset-password.html?token=${securityToken}
 
     }
 
-    //update user by admin
-   public static async UpdateUserByAdmin(params: any){
-
-        if(params.type != "JUDGE"){
-            params.assigned = [];
-        }
-        try{
-            let userUpdated = await User.findOneAndUpdate({_id: params.user}, {type: params.type, active: params.active, assigned: params.assigned});
-
-            return {
-                exists: true,
-                error: null,
-                notice: 'User profile was successfully updated',
-                result: userUpdated
-            }
-
-        }catch(err){
-            return {
-                exists: false,
-                error: err,
-                notice: 'an error occured updating user parameters',
-                result: null
-            }
-        }
-
-    }
-
 }
 
-export default new AuthService();
+export default AuthService;

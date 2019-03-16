@@ -5,14 +5,16 @@
  */
 
 import { Request, Response, NextFunction } from "express";
-import ResponseInterface from "../Interfaces/Response.interface";
+import MessageResponse from "../Interfaces/HttpResponse.interface";
 
 //validate auth routes
 class AuthRoutesValidation{
 
-   private static responseMessage: ResponseInterface;
-
-   //validate incomig requests for such routes
+   /**
+    * @uses validating routes
+    * @params case insertion of route requirements
+    * @returns express middleware
+    */
    public static ValidateParams(req: Request, res: Response, next: NextFunction): any{
 
         switch(req.url){
@@ -44,16 +46,12 @@ class AuthRoutesValidation{
 
        if(req.validationErrors()){
 
-            AuthRoutesValidation.responseMessage = {
-
+            return res.status(200).json(<MessageResponse>{
                 status: false,
                 validationMessage: req.validationErrors(),
                 response: null,
                 responseMessage: "provided params are invalid"
-
-            }
-
-            return res.status(200).json(AuthRoutesValidation.responseMessage);
+            });
 
         }
 

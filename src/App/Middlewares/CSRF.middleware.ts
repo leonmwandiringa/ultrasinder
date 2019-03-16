@@ -4,19 +4,12 @@
  * @return a csrf security middleware
  */
 
-import { Router, Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import Config from "../../Config";
-import MessageResponse from "../Interfaces/Response.interface";
+import MessageResponse from "../Interfaces/HttpResponse.interface";
 const jwt = require("jsonwebtoken");
 
 class CSRFHeaderSecurity{
-
-   protected router: Router;
-   constructor(){
-
-       this.router = Router();
-
-   }
 
    //initiate csrf security
    public static initSecurity(req: Request, res: Response, next: NextFunction){

@@ -5,7 +5,7 @@
  */
 
 import {Request, Response } from "express";
-import ResponseInterface from "../../Interfaces/Response.interface";
+import ResponseInterface from "../../Interfaces/HttpResponse.interface";
 import { AuthService } from "../../Services";
 
 class LoginController{

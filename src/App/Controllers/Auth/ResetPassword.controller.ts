@@ -5,22 +5,24 @@
  */
 
 import {Request, Response } from "express";
-import ResponseInterface from "../../Interfaces/Response.interface";
 import { AuthService } from "../../Services";
+import MessageResponse from "../../Interfaces/HttpResponse.interface";
 
 class ResetPasswordController{
 
-   public static SvResponse: ResponseInterface;
-
-    //reset PasswordMethod
+    /**
+     * @uses reset user password
+     * @return response exec
+     * @params req, res
+     */
     public async Init(req: Request, res: Response){
 
-        let ResetReset = await AuthService.Init("applyreset", req.body);
+        let ResetReset: any = await AuthService.CreateUser(req.body);
 
         switch(ResetReset.result){
 
             case null:
-                return res.status(403).json({
+                return res.status(403).json(<MessageResponse>{
                     status: false,
                     validationMessage: ResetReset.error,
                     response: ResetReset.result,
@@ -28,7 +30,7 @@ class ResetPasswordController{
                 });
             break;
             default:
-                return res.status(200).json({
+                return res.status(200).json(<MessageResponse>{
                     status: true,
                     validationMessage: null,
                     response: ResetReset.result,

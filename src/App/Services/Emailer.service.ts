@@ -1,12 +1,13 @@
 /**
  * @author Leon Mwandiringa
- * @uses define Enmailer service
+ * @uses define Emailer service
  * @return emailer instance
  */
 
 import * as Mailer from "nodemailer";
-import Config from "../../../Bootstrap/Config";
+import Config from "../../Config";
 
+//setup sending client
 const emailer = Mailer.createTransport({
     host: 'in-v3.mailjet.com',
         port: Config.SMTP_RELAY.mailjet.port,
@@ -17,7 +18,7 @@ const emailer = Mailer.createTransport({
         }
 });
 
-//
+
 class EmailerService{
 
     private sendTo: string;
@@ -32,7 +33,10 @@ class EmailerService{
 
     }
 
-    //sending user an email
+    /**
+     * @uses sending email
+     * @return void
+     */
    public send(){
 
         let mailOptions = {
@@ -44,9 +48,9 @@ class EmailerService{
 
         emailer.sendMail(mailOptions, function(error: any, info: any){
             if (error) {
-            console.log(error);
+                console.log(error);
             } else {
-            console.log('Email sent: ' + info.response);
+                console.log('Email sent: ' + info.response);
             }
         });
 

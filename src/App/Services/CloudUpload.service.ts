@@ -4,18 +4,21 @@
  * @return file url or returned error
  */
 
-import Config from "../../../Bootstrap/Config"; 
+import Config from "../../Config"; 
 import { promises } from "fs";
 let cloudinary = require("cloudinary").v2;
 cloudinary.config({ 
     cloud_name: Config.STORAGE.cloudinary.name, 
     api_key: Config.STORAGE.cloudinary.key, 
     api_secret: Config.STORAGE.cloudinary.secret
-  });
+});
 
 class CloudUploadService{
 
-    //init file upload
+    /**
+     * @uses uploading to cloudinary
+     * @returns rerror | success message accordingly
+     */
    async Init(payload: any){
 
         return new Promise((resolve: any, reject: any)=>{

@@ -4,12 +4,11 @@
  * @return file url or returned error
  */
 
-import Config from "../../../Bootstrap/Config";
-import {Request, Response } from "express";
+import Config from "../..//Config";
 import * as filesys from "fs";
 import * as path from "path";
 
-class UploadService{
+class LocalUploadService{
 
     //init file upload
    public Init(resource: any, preExec: any, payload: any): object{
@@ -35,4 +34,4 @@ class UploadService{
 
 }
 
-export default new UploadService();
+export default new LocalUploadService();

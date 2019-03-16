@@ -41,10 +41,12 @@
     "express": "^4.16.3",
     "express-validator": "^5.2.0",
     "jsonwebtoken": "^8.4.0",
+    "lodash": "^4.17.11",
     "mongoose": "^5.0.18",
     "nodemailer": "^5.1.1",
     "nodemon": "^1.18.10",
     "pm2": "^3.4.0",
+    "range_check": "^1.4.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "superdooper": "^1.0.9"

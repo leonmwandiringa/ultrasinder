@@ -6,7 +6,7 @@
 
 
 let jwt = require("jsonwebtoken");
-import Config from "../../../Bootstrap/Config";
+import Config from "../../Config";
 
 class CsrfTokenService{
 
@@ -17,6 +17,11 @@ class CsrfTokenService{
 
    }
 
+   /**
+    * @uses generating csrf tokens
+    * @return 256bit encrypted jwt token
+    * @params null
+    */
    public static genToken(): any{
 
         let randomKey = Math.floor(Math.random() * 7);
